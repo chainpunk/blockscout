@@ -4,7 +4,7 @@ defmodule BlockScoutWeb.ViewingTransactionsTest do
   use BlockScoutWeb.FeatureCase, async: true
 
   alias Explorer.Chain.Wei
-  alias BlockScoutWeb.{AddressPage, TransactionListPage, TransactionLogsPage, TransactionPage}
+  alias BlockScoutWeb.{AddressPage, Notifier, TransactionListPage, TransactionLogsPage, TransactionPage}
 
   setup do
     block =
@@ -81,6 +81,18 @@ defmodule BlockScoutWeb.ViewingTransactionsTest do
       |> assert_has(TransactionListPage.transaction(pending))
       |> assert_has(TransactionListPage.transaction(pending_contract))
       |> assert_has(TransactionListPage.transaction_status(pending_contract))
+    end
+
+    test "live remove collated pending transaction", %{pending: pending, session: session} do
+      session
+      |> TransactionListPage.visit_page()
+      |> TransactionListPage.click_pending()
+      |> assert_has(TransactionListPage.transaction(pending))
+
+      transaction = with_block(pending)
+      Notifier.handle_event({:chain_event, :transactions, [transaction.hash]})
+
+      refute_has(session, TransactionListPage.transaction(pending))
     end
 
     test "contract creation is shown for to_address on list page", %{session: session} do
