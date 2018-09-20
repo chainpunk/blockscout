@@ -11,4 +11,7 @@ defmodule BlockScoutWeb.Tokens.TokenView do
   end
 
   def smart_contract_with_read_only_functions?(%Token{contract_address: %Address{smart_contract: nil}}), do: false
+
+  def display_inventory?(%Token{type: "ERC-721"}), do: true
+  def display_inventory?(_), do: false
 end

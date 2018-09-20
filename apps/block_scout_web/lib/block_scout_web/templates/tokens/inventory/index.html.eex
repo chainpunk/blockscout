@@ -33,7 +33,7 @@
           <li class="nav-item">
             <%= link(
                   gettext("Token Holders"),
-                  class: "nav-link active",
+                  class: "nav-link",
                   "data-test": "token_holders_tab",
                   to: token_holder_path(@conn, :index, @token.contract_address_hash)
                 ) %>
@@ -43,7 +43,7 @@
             <li class="nav-item">
               <%= link(
                     gettext("Inventory"),
-                    class: "nav-link",
+                    class: "nav-link active",
                     to: token_inventory_path(@conn, :index, @token.contract_address_hash)
                   ) %>
             </li>
@@ -68,13 +68,13 @@
               <% end %>
               <%= link(
                   gettext("Token Holders"),
-                  class: "dropdown-item active",
+                  class: "dropdown-item",
                   to: token_holder_path(@conn, :index, @token.contract_address_hash)
                 ) %>
               <%= if TokenView.display_inventory?(@token) do %>
                 <%= link(
                       gettext("Inventory"),
-                      class: "dropdown-item",
+                      class: "dropdown-item active",
                       to: token_inventory_path(@conn, :index, @token.contract_address_hash)
                     ) %>
               <% end %>
@@ -83,18 +83,17 @@
         </ul>
       </div>
 
-      <!-- Token Holders -->
       <div class="card-body">
-        <h2 class="card-title"><%= gettext "Token Holders" %></h2>
+        <h2 class="card-title"><%= gettext "Inventory" %></h2>
 
-        <%= if Enum.any?(@token_balances) do %>
-          <%= for token_balance <- @token_balances do %>
-            <%= render "_token_balances.html", token: @token, token_balance: token_balance %>
+        <%= if Enum.any?(@unique_tokens) do %>
+          <%= for token_transfer <- @unique_tokens do %>
+            <%= render "_token.html", token_transfer: token_transfer %>
           <% end %>
         <% else %>
           <div class="tile tile-muted text-center">
             <span data-selector="empty-transactions-list">
-              <%= gettext "There are no holders for this Token." %>
+              <%= gettext "There are no tokens." %>
             </span>
           </div>
         <% end %>
@@ -103,7 +102,7 @@
           <%= link(
             gettext("Next Page"),
             class: "button button-secondary button-small float-right mt-4",
-            to: token_holder_path(@conn, :index, @token.contract_address_hash, @next_page_params)
+            to: token_inventory_path(@conn, :index, @token.contract_address_hash, @next_page_params)
           ) %>
         <% end %>
       </div>
